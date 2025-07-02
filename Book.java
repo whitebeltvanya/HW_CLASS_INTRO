@@ -7,14 +7,15 @@ public class Book {
 
     public String title;
     public int releaseYear;
-    public String author;
+    public Author author;
     public int pages;
 
-    public Book (String title, int releaseYear, String author,int pages){
+    public Book (String title, int releaseYear, String authorName,
+                 String authorSurName, int authorRating, int pages){
         this.title = title;
         this.releaseYear = Math.abs(releaseYear);
-        this.author = author;
-        this.pages  = Math.abs(pages);
+        this.author = new Author(authorName, authorSurName,authorRating);
+        this.pages  = Math.max(pages, 1);
     }
 
     public boolean isBig(){
@@ -22,18 +23,19 @@ public class Book {
     }
 
     public boolean matches(String word){
-        return (title.contains(word) || author.contains(word));
+        return (title.contains(word) || author.matches(word));
     }
 
     public int estimatePrice(){
         int price = pages*PRICE_PER_PAGE;
-        price = Math.max(price, MIN_PRICE_LIMIT);
-        return price;
+        price = pages * (int)Math.floor(Math.sqrt(author.rating));
+        return Math.max(price, MIN_PRICE_LIMIT);
     }
 
     @Override
     public String toString() {
-        return String.format("Автор: \"%s\", Название: \"%s\", Год: %d, Страниц: %d, Цена: %d %s.",
-                             author, title, releaseYear, pages, estimatePrice(), CURRENCY);
+        return String.format("Автор: \"%s %s\", Название: \"%s\", Год: %d, Страниц: %d, Рейтинг: %d/%d, Цена: %d %s.",
+                                    author.name,author.surname, title, releaseYear, pages, author.rating,
+                                    author.maxRating, estimatePrice(), CURRENCY);
     }
 }
